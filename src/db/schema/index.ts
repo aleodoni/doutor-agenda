@@ -1,0 +1,6 @@
+export * from './clinics'
+export * from './doctors'
+export * from './patients'
+export * from './users'
+export * from './specialities'
+export * from './appointments'
