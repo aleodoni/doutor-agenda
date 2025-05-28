@@ -18,30 +18,47 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { authClient } from '@/lib/auth-client'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
-const loginSchema = z.object({
-  name: z.string().trim().min(1, { message: 'Nome é obrigatorio' }),
+const registerSchema = z.object({
   email: z.string().trim().email({ message: 'Email inválido' }),
   password: z
     .string()
     .trim()
-    .min(6, { message: 'A senha precisa ter pelo menos 6 caracteres' }),
+    .min(8, { message: 'A senha precisa ter pelo menos 8 caracteres' }),
 })
 
 const LoginForm = () => {
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const router = useRouter()
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   })
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof registerSchema>) {
+    await authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onSuccess: () => {
+          router.push('/dashboard')
+        },
+        onError: () => {
+          toast.error('Email ou senha incorretos')
+        },
+      }
+    )
   }
 
   return (
@@ -85,8 +102,16 @@ const LoginForm = () => {
             />
           </CardContent>
           <CardFooter>
-            <Button className='w-full' type='submit'>
-              Entrar
+            <Button
+              className='w-full'
+              type='submit'
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              ) : (
+                'Entrar'
+              )}
             </Button>
           </CardFooter>
         </form>
