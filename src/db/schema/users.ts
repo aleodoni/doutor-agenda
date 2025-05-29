@@ -28,7 +28,7 @@ export const usersToClinicsTable = pgTable('users_to_clinics', {
     .references(() => usersTable.id, { onDelete: 'cascade' }),
   clinicId: text('clinic_id')
     .notNull()
-    .references(() => usersTable.id, { onDelete: 'cascade' }),
+    .references(() => clinicsTable.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at')
     .defaultNow()
