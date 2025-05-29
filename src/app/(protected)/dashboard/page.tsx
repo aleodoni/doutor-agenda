@@ -4,7 +4,7 @@ import { auth } from '@/lib/auth'
 import { eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { SignoutButton } from './components/signout-button'
+import { SignoutButton } from './_components/signout-button'
 
 const DashboardPage = async () => {
   const session = await auth.api.getSession({
