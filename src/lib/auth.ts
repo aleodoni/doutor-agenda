@@ -30,14 +30,21 @@ export const auth = betterAuth({
         },
       })
 
-      const clinic = clinics[0]
+      const clinic = clinics?.[0]
+
+      if (!clinic) {
+        return {
+          user: { ...user, clinic: undefined },
+          session,
+        }
+      }
 
       return {
         user: {
           ...user,
           clinic: {
-            clinicId: clinic.clinicId,
-            name: clinic.clinic.name,
+            clinicId: clinic?.clinicId,
+            name: clinic?.clinic?.name,
           },
         },
         session,
