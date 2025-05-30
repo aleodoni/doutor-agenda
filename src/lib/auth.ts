@@ -43,7 +43,7 @@ export const auth = betterAuth({
         user: {
           ...user,
           clinic: {
-            clinicId: clinic?.clinicId,
+            id: clinic?.clinicId,
             name: clinic?.clinic?.name,
           },
         },
