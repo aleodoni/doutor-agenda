@@ -4,6 +4,8 @@ import * as schema from '@/db/schema'
 import { env } from '@/env'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { customSession } from 'better-auth/plugins'
+import { eq } from 'drizzle-orm'
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -18,6 +20,30 @@ export const auth = betterAuth({
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
   },
+
+  plugins: [
+    customSession(async ({ user, session }) => {
+      const clinics = await db.query.usersToClinicsTable.findMany({
+        where: eq(schema.usersToClinicsTable.userId, user.id),
+        with: {
+          clinic: true,
+        },
+      })
+
+      const clinic = clinics[0]
+
+      return {
+        user: {
+          ...user,
+          clinic: {
+            clinicId: clinic.clinicId,
+            name: clinic.clinic.name,
+          },
+        },
+        session,
+      }
+    }),
+  ],
 
   user: {
     modelName: 'usersTable',
