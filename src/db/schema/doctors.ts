@@ -15,11 +15,16 @@ export const doctorsTable = pgTable('doctors', {
   updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => new Date()),
-  availableTimeMonday: time('available_time_monday').notNull(),
-  availableTimeTuesday: time('available_time_tuesday').notNull(),
-  availableTimeWednesday: time('available_time_wednesday').notNull(),
-  availableTimeThursday: time('available_time_thursday').notNull(),
-  availableTimeFriday: time('available_time_friday').notNull(),
+  availableFromTimeMonday: time('available_from_time_monday'),
+  availableToTimeMonday: time('available_to_time_monday'),
+  availableFromTimeTuesday: time('available_from_time_tuesday'),
+  availableToTimeTuesday: time('available_to_time_tuesday'),
+  availableFromTimeWednesday: time('available_from_time_wednesday'),
+  availableToTimeWednesday: time('available_to_time_wednesday'),
+  availableFromTimeThursday: time('available_from_time_thursday'),
+  availableToTimeThursday: time('available_to_time_thursday'),
+  availableFromTimeFriday: time('available_from_time_friday'),
+  availableToTimeFriday: time('available_to_time_friday'),
   appointmentPriceInCents: integer('appointment_price_in_cents').notNull(),
   specialityId: text('speciality_id')
     .notNull()
