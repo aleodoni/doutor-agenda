@@ -6,6 +6,7 @@ import { auth } from '@/lib/auth'
 import { actionClient } from '@/lib/next-safe-action'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { upsertDoctorSchema } from './schema'
 
@@ -139,6 +140,7 @@ export const upsertDoctor = actionClient
           availableToTimeFriday: availableToTimeFridayUTC.format('HH:mm:ss'),
         },
       })
+    revalidatePath('/doctors')
   })
 
 const formatTimeToUTC = (timeString: string) => {
