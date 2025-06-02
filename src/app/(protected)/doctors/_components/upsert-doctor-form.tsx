@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import type { doctorsTable } from '@/db/schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAction } from 'next-safe-action/hooks'
 import { type UseFormReturn, useForm } from 'react-hook-form'
@@ -131,36 +132,43 @@ const formSchema = z
   )
 
 type UpsertDoctorFormProps = {
+  doctor: typeof doctorsTable.$inferSelect
   specialities: {
     name: string
     id: string
   }[]
   onSuccess?: () => void
 }
-export const UpsertDoctorForm = (props: UpsertDoctorFormProps) => {
+export const UpsertDoctorForm = ({
+  doctor,
+  specialities,
+  onSuccess,
+}: UpsertDoctorFormProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      speciality: '',
-      appointmentPrice: 0,
-      availableFromTimeMonday: '',
-      availableToTimeMonday: '',
-      availableFromTimeTuesday: '',
-      availableToTimeTuesday: '',
-      availableFromTimeWednesday: '',
-      availableToTimeWednesday: '',
-      availableFromTimeThursday: '',
-      availableToTimeThursday: '',
-      availableFromTimeFriday: '',
-      availableToTimeFriday: '',
+      name: doctor?.name ?? '',
+      speciality: doctor?.specialityId ?? '',
+      appointmentPrice: doctor?.appointmentPriceInCents
+        ? doctor.appointmentPriceInCents / 100
+        : 0,
+      availableFromTimeMonday: doctor?.availableFromTimeMonday ?? '',
+      availableToTimeMonday: doctor?.availableToTimeMonday ?? '',
+      availableFromTimeTuesday: doctor?.availableFromTimeTuesday ?? '',
+      availableToTimeTuesday: doctor?.availableToTimeTuesday ?? '',
+      availableFromTimeWednesday: doctor?.availableFromTimeWednesday ?? '',
+      availableToTimeWednesday: doctor?.availableToTimeWednesday ?? '',
+      availableFromTimeThursday: doctor?.availableFromTimeThursday ?? '',
+      availableToTimeThursday: doctor?.availableToTimeThursday ?? '',
+      availableFromTimeFriday: doctor?.availableFromTimeFriday ?? '',
+      availableToTimeFriday: doctor?.availableToTimeFriday ?? '',
     },
   })
 
   const upsertDoctorAction = useAction(upsertDoctor, {
     onSuccess() {
       toast.success('Medico cadastrado com sucesso')
-      props.onSuccess?.()
+      onSuccess?.()
     },
     onError() {
       toast.error('Erro ao cadastrar medico')
@@ -170,6 +178,7 @@ export const UpsertDoctorForm = (props: UpsertDoctorFormProps) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     upsertDoctorAction.execute({
       ...values,
+      id: doctor?.id,
       appointmentPriceInCents: values.appointmentPrice * 100,
     })
   }
@@ -177,9 +186,13 @@ export const UpsertDoctorForm = (props: UpsertDoctorFormProps) => {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Adicionar um novo medico</DialogTitle>
+        <DialogTitle>
+          {doctor ? doctor.name : 'Adicionar um novo medico'}
+        </DialogTitle>
         <DialogDescription>
-          Preencha os campos abaixo para adicionar um novo medico.
+          {doctor
+            ? 'Edite as informações do medico.'
+            : 'Adicione um novo medico.'}
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
@@ -214,7 +227,7 @@ export const UpsertDoctorForm = (props: UpsertDoctorFormProps) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {props.specialities.map(speciality => (
+                    {specialities.map(speciality => (
                       <SelectItem
                         key={speciality.id}
                         value={speciality.id}
@@ -504,7 +517,11 @@ export const UpsertDoctorForm = (props: UpsertDoctorFormProps) => {
 
           <DialogFooter>
             <Button type='submit' disabled={upsertDoctorAction.isPending}>
-              {upsertDoctorAction.isPending ? 'Adicionando...' : 'Adicionar'}
+              {upsertDoctorAction.isPending
+                ? 'Salvando...'
+                : doctor
+                  ? 'Salvar'
+                  : 'Adicionar'}
             </Button>
           </DialogFooter>
         </form>

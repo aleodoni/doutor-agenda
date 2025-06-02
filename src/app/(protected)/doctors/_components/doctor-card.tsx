@@ -10,6 +10,7 @@ import type { doctorsTable, specialitiesTable } from '@/db/schema'
 import { formatCurrencyIncents } from '@/helpers/currency'
 import type { InferSelectModel } from 'drizzle-orm'
 import { CalendarIcon, ClockIcon, DollarSignIcon } from 'lucide-react'
+import React from 'react'
 import { getAvailability } from '../_helpers/availability'
 import { UpsertDoctorForm } from './upsert-doctor-form'
 
@@ -23,6 +24,8 @@ type DoctorCardProps = {
   }[]
 }
 export const DoctorCard = ({ doctor, specialities }: DoctorCardProps) => {
+  const [isUpsertDoctorDialogOpen, setIsUpsertDoctorDialogOpen] =
+    React.useState(false)
   const doctorInitials = doctor.name
     .split(' ')
     .slice(1, 3)
@@ -156,11 +159,42 @@ export const DoctorCard = ({ doctor, specialities }: DoctorCardProps) => {
       </CardContent>
       <Separator />
       <CardFooter>
-        <Dialog>
+        <Dialog
+          open={isUpsertDoctorDialogOpen}
+          onOpenChange={setIsUpsertDoctorDialogOpen}
+        >
           <DialogTrigger asChild>
             <Button className='w-full'>Ver detalhes</Button>
           </DialogTrigger>
-          <UpsertDoctorForm specialities={specialities} />
+          <UpsertDoctorForm
+            specialities={specialities}
+            doctor={{
+              ...doctor,
+              availableFromTimeMonday:
+                availability.monday.from?.format('HH:mm:ss') ?? '',
+              availableToTimeMonday:
+                availability.monday.to?.format('HH:mm:ss') ?? '',
+              availableFromTimeTuesday:
+                availability.tuesday.from?.format('HH:mm:ss') ?? '',
+              availableToTimeTuesday:
+                availability.tuesday.to?.format('HH:mm:ss') ?? '',
+              availableFromTimeWednesday:
+                availability.wednesday.from?.format('HH:mm:ss') ?? '',
+              availableToTimeWednesday:
+                availability.wednesday.to?.format('HH:mm:ss') ?? '',
+              availableFromTimeThursday:
+                availability.thursday.from?.format('HH:mm:ss') ?? '',
+              availableToTimeThursday:
+                availability.thursday.to?.format('HH:mm:ss') ?? '',
+              availableFromTimeFriday:
+                availability.friday.from?.format('HH:mm:ss') ?? '',
+              availableToTimeFriday:
+                availability.friday.to?.format('HH:mm:ss') ?? '',
+            }}
+            onSuccess={() => {
+              setIsUpsertDoctorDialogOpen(false)
+            }}
+          />
         </Dialog>
       </CardFooter>
     </Card>
