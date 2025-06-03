@@ -201,7 +201,7 @@ export const UpsertDoctorForm = ({
 
   const handleDeleteDoctorClick = () => {
     if (!doctor) return
-    deleteDoctorAction.execute({ id: doctor.id ?? '' })
+    deleteDoctorAction.execute({ id: doctor?.id ?? '' })
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
