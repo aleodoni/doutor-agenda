@@ -194,6 +194,7 @@ export const DoctorCard = ({ doctor, specialities }: DoctorCardProps) => {
             onSuccess={() => {
               setIsUpsertDoctorDialogOpen(false)
             }}
+            isOpen={isUpsertDoctorDialogOpen}
           />
         </Dialog>
       </CardFooter>

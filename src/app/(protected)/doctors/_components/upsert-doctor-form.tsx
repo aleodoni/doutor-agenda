@@ -145,12 +145,13 @@ const formSchema = z
   )
 
 type UpsertDoctorFormProps = {
-  doctor: typeof doctorsTable.$inferSelect
+  doctor?: typeof doctorsTable.$inferSelect
   specialities: {
     name: string
     id: string
   }[]
   onSuccess?: () => void
+  isOpen: boolean
 }
 export const UpsertDoctorForm = ({
   doctor,

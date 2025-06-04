@@ -27,6 +27,8 @@ export const AddDoctorButton = (props: AddDoctorButtonProps) => {
       <UpsertDoctorForm
         specialities={props.specialities}
         onSuccess={() => setOpen(false)}
+        doctor={undefined}
+        isOpen={isOpen}
       />
     </Dialog>
   )

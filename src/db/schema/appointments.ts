@@ -1,5 +1,5 @@
 import { createId } from '@paralleldrive/cuid2'
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
 import { relations } from 'drizzle-orm'
 import { clinicsTable } from './clinics'
@@ -24,6 +24,7 @@ export const appointmentsTable = pgTable('appointments', {
   doctorId: text('doctor_id')
     .notNull()
     .references(() => doctorsTable.id, { onDelete: 'cascade' }),
+  appointmentPriceInCents: integer('appointment_price_in_cents').notNull(),
 })
 
 export const appointmentsTableRelations = relations(
